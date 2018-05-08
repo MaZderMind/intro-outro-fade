@@ -5,7 +5,8 @@ import argparse
 
 # import GStreamer and GLib-Helper classes
 gi.require_version('Gst', '1.0')
-from gi.repository import Gst, GObject
+gi.require_version('GstController', '1.0')
+from gi.repository import Gst, GstController, GObject
 
 # init GObject & Co. before importing local classes
 GObject.threads_init()
@@ -60,6 +61,25 @@ pipelineDescription = """
 print(pipelineDescription, file=sys.stderr)
 
 pipeline = Gst.parse_launch(pipelineDescription)
+
+vmix = pipeline.get_by_name('vmix')
+print(vmix, file=sys.stderr)
+sink_pad = vmix.get_static_pad('sink_1')
+print(sink_pad, file=sys.stderr)
+
+cs = GstController.InterpolationControlSource.new()
+print(cs, file=sys.stderr)
+print(cs.get_property('mode'), file=sys.stderr)
+cs.set_property('mode', GstController.InterpolationMode.LINEAR)
+print(cs.get_property('mode'), file=sys.stderr)
+
+cbinding = GstController.DirectControlBinding.new(sink_pad, "alpha", cs)
+print(cbinding, file=sys.stderr)
+print(cbinding.pspec, file=sys.stderr)
+sink_pad.add_control_binding(cbinding)
+
+cs.set(0 * Gst.SECOND, 1.0);
+cs.set(2 * Gst.SECOND, 0.0);
 
 
 def on_eos(bus, message):

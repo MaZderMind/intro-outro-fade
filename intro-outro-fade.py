@@ -16,17 +16,19 @@ mainloop = GObject.MainLoop()
 parser = argparse.ArgumentParser()
 parser.add_argument("--intro", help="intro to prepend")
 
+parser.add_argument("--intro-fade-mode", help="fade-mode between intro and content", choices=["linear", "cubic", "cubic_monotonic"], default="linear")
 parser.add_argument("--intro-fade-time", help="duration in seconds for which intro and content should overlap", default=0.5, type=float)
 parser.add_argument("--intro-audio-earlier", help="duration in seconds by which the audio overlap between intro and content should be earlier then the video-overlap", default=0.25, type=float)
 
 parser.add_argument("--content", help="content to wrap", required=True)
 
+parser.add_argument("--outro-fade-mode", help="fade-mode between outro and content", choices=["linear", "cubic", "cubic_monotonic"], default="linear")
 parser.add_argument("--outro-fade-time", help="duration in seconds for which outro and content should overlap", default=0.5, type=float)
 parser.add_argument("--outro-audio-later", help="duration in seconds by which the audio overlap between outro and content should be later then the video-overlap", default=0.25, type=float)
 
 parser.add_argument("--outro", help="outro to append")
 
-parser.add_argument("--tty-ok", help="outro to append", action='store_true')
+parser.add_argument("--tty-ok", help="allow writing binary data to stdout", action='store_true')
 
 args = parser.parse_args()
 print(args, file=sys.stderr)
